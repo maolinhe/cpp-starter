@@ -1,6 +1,7 @@
+#include <iostream>
 #include "include/namespace_test.h"
 #include "include/std_input_output.h"
-#include <iostream>
+#include "include/default_params.h"
 
 using namespace std;
 
@@ -24,6 +25,11 @@ int main(int argc, char *argv[]) {
 
   case U("std_input_output"):
     std_input_output();
+    break;
+
+  case U("default_params"):
+    default_all_params();
+    default_partial_params(5);
     break;
   }
 

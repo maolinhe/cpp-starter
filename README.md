@@ -41,9 +41,32 @@ std::cin >> val;
 ```
 * std::cout: 标准输出
 ```cpp
-std::cout << "Hello cpp" <<std::endl;
+std::cout << "Hello cpp" << std::endl;
 ```
-* std::cerr:标准错误输出
+* std::cerr: 标准错误输出
 ```cpp
-std::cerr << "Hello cpp" <<std::endl;
+std::cerr << "Hello cpp" << std::endl;
+```
+
+### 缺省参数
+在声明或者定义函数的时候，为函数的参数指定一个默认值，在调用函数的时候，如果没有为该参数传入实参，则采用默认参数，否则采用实参
+* 缺省参数不能在声明和定义中同时出现
+* 缺省参数值必须是常量或者全局变量
+#### 全缺省
+```cpp
+int default_all_params(int length = 3, int width = 4, int height = 5) {
+    std::cout << "length = " << length << ", width = " << width
+    << ", height = " << height << std::endl;
+    return length * width * height;
+}
+```
+函数的全部参数在定义的时候全部设置默认值
+#### 半缺省
+* 必须从右到左依次给出，不能间隔
+```cpp
+int default_partial_params(int length, int width = 4, int height = 5) {
+    std::cout << "length = " << length << ", width = " << width
+    << ", height = " << height << std::endl;
+    return length * width * height;
+}
 ```
