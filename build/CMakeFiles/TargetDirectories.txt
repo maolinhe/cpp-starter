@@ -1,3 +1,0 @@
-/home/ubuntu/workspace/basic-cpp/build/CMakeFiles/demo.dir
-/home/ubuntu/workspace/basic-cpp/build/CMakeFiles/edit_cache.dir
-/home/ubuntu/workspace/basic-cpp/build/CMakeFiles/rebuild_cache.dir

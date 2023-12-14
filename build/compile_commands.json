@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/ubuntu/workspace/basic-cpp/build",
-  "command": "/usr/bin/c++    -o CMakeFiles/demo.dir/src/main.cpp.o -c /home/ubuntu/workspace/basic-cpp/src/main.cpp",
-  "file": "/home/ubuntu/workspace/basic-cpp/src/main.cpp"
-}
-]
