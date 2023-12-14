@@ -1,6 +1,10 @@
 # Beginner of cpp
 
-## namespace
+[toc]
+
+## c++基础
+
+### namespace
 一个命名空间定义了一个新的作用域，命名空间内所有的内容都局限于该命名空间
 
 ### namespace定义
@@ -27,4 +31,19 @@ using MyNamespace::print;
 * 使用using引入整个命名空间
 ```cpp
 using MyNamespace
+```
+
+### 标准输入输出
+* std::cin: 标准输入
+```cpp
+int val;
+std::cin >> val;
+```
+* std::cout: 标准输出
+```cpp
+std::cout << "Hello cpp" <<std::endl;
+```
+* std::cerr:标准错误输出
+```cpp
+std::cerr << "Hello cpp" <<std::endl;
 ```
