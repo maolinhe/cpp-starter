@@ -53,6 +53,7 @@ std::cerr << "Hello cpp" << std::endl;
 * 缺省参数不能在声明和定义中同时出现
 * 缺省参数值必须是常量或者全局变量
 #### 全缺省
+函数的全部参数在定义的时候全部设置默认值
 ```cpp
 int default_all_params(int length = 3, int width = 4, int height = 5) {
     std::cout << "length = " << length << ", width = " << width
@@ -60,7 +61,7 @@ int default_all_params(int length = 3, int width = 4, int height = 5) {
     return length * width * height;
 }
 ```
-函数的全部参数在定义的时候全部设置默认值
+
 #### 半缺省
 * 必须从右到左依次给出，不能间隔
 ```cpp
