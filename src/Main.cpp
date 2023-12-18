@@ -1,7 +1,7 @@
 #include <iostream>
-#include "include/namespace_test.h"
-#include "include/std_input_output.h"
-#include "include/default_params.h"
+#include "include/Namespace.h"
+#include "include/StdInputOutput.h"
+#include "include/DefaultParams.h"
 
 using namespace std;
 
@@ -24,12 +24,12 @@ int main(int argc, char *argv[]) {
     break;
 
   case U("std_input_output"):
-    std_input_output();
+    stdInputOutput();
     break;
 
   case U("default_params"):
-    default_all_params();
-    default_partial_params(5);
+    defaultAllParams();
+    defaultPartialParams(5);
     break;
   }
 

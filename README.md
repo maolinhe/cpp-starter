@@ -1,6 +1,16 @@
 # Beginner of cpp
 
-[TOC]
+- [Beginner of cpp](#beginner-of-cpp)
+  - [c++基础](#c基础)
+    - [namespace](#namespace)
+    - [namespace定义](#namespace定义)
+    - [namespace使用](#namespace使用)
+    - [标准输入输出](#标准输入输出)
+    - [缺省参数](#缺省参数)
+      - [全缺省](#全缺省)
+      - [半缺省](#半缺省)
+    - [函数重载](#函数重载)
+
 
 ## c++基础
 
@@ -71,3 +81,10 @@ int default_partial_params(int length, int width = 4, int height = 5) {
     return length * width * height;
 }
 ```
+### 函数重载
+同一个作用域中的两个函数的函数名相同，但是形参列表不同：
+* 形参个数不同
+* 形参类型不同
+* 形参顺序不同
+
+[**参考文章**](https://blog.csdn.net/chenlong_cxy/article/details/127166206)
