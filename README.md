@@ -10,6 +10,10 @@
       - [全缺省](#全缺省)
       - [半缺省](#半缺省)
     - [函数重载](#函数重载)
+      - [函数重载原理](#函数重载原理)
+    - [单元测试-googletest](#单元测试-googletest)
+      - [SetUp and TearDown函数](#setup-and-teardown函数)
+      - [测试用例宏](#测试用例宏)
 
 
 ## c++基础
@@ -86,5 +90,87 @@ int default_partial_params(int length, int width = 4, int height = 5) {
 * 形参个数不同
 * 形参类型不同
 * 形参顺序不同
+
+#### 函数重载原理
+C++函数再编译后会生成一个标识符，该标识符由函数名称和函数参数类型共同组成，因此即使同名函数，参数不同，修饰出来的标识符可能会不一样，这个就支持了函数重载
+例如：
+以下两个函数
+```cpp
+void fun(int a, string b);
+void fun(string a, int b);
+```
+编译出来的函数标识符分别为
+```cpp
+_fun_int_string
+_fun_string_int
+```
+
+### 单元测试-googletest
+googletest简称gtest是一个用于c++单元测试的框架。仓库地址[https://github.com/google/googletest.git](https://github.com/google/googletest.git)
+
+安装gtest环境，以ubuntu为例
+```bash
+sudo git clone https://github.com/google/googletest.git
+sudo cd googletest
+sudo mkdir build & cd build
+sudo cmake ..
+sudo make
+sudo make install
+```
+安装后路径
+```bash
+/usr/local/lib
+/usr/local/include/gtest
+```
+
+#### SetUp and TearDown函数
+* SetUpTestCase()
+  在测试类的构造函数之后和第一个测试用例之前执行
+
+* SetUp()
+  在每一个测试用例执行之前执行，TEST宏不生效
+
+* TearDownTestCase()
+  在最后一个测试用例之后和测试类的析构函数之前执行，TEST宏不生效
+
+* TearDown()
+  在每一个测试用例执行之后执行，TEST宏不生效
+
+#### 测试用例宏
+* TEST
+  用于快速测试的宏，不依赖测试类，因此也不会升到测试类的生命周期函数影响
+```cpp
+TEST(TestSuiteName, TestName) {
+  ... statements ...
+}
+```
+* TEST_F
+  依赖于测试类，并且受到测试类生命周期函数影响。TEST_F包含了TEST所有功能，因此一般会直接使用TEST_F
+```cpp
+TEST_F(TestFixtureName, TestName) {
+  ... statements ...
+}
+```
+* TEST_P
+  一个参数化的测试用例宏，当需要测试的数据比较多的时候，可以简化我们的代码书写。使用TEST_P需要让测试类继承`testing::TestWithParam<Type>`
+```cpp
+class TestClass : public ::testing::TestWithParam<int>
+{
+...
+}
+```
+TEST_P定义和TEST_F类似，第一个参数为类名，第二个参数随意，按需即可
+```cpp
+TEST_P(TestClass, TestName) {
+  int param = GetParam();
+  ... statements ...
+}
+```
+然后生成参数：
+```cpp
+INSTANTIATE_TEST_SUITE_P(Params, TestClass, testing::Values(2, 4, 6, 8));
+```
+在TEST_P测试用例中，可以使用`GetParam()`获取参数
+
 
 [**参考文章**](https://blog.csdn.net/chenlong_cxy/article/details/127166206)
