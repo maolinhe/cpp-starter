@@ -11,6 +11,7 @@
       - [半缺省](#半缺省)
     - [函数重载](#函数重载)
       - [函数重载原理](#函数重载原理)
+      - [extern "C"](#extern-c)
     - [单元测试-googletest](#单元测试-googletest)
       - [SetUp and TearDown函数](#setup-and-teardown函数)
       - [测试用例宏](#测试用例宏)
@@ -104,6 +105,28 @@ void fun(string a, int b);
 _fun_int_string
 _fun_string_int
 ```
+#### extern "C"
+C语言中函数无法重载，因为它不支持函数类似C++的函数标识符的编译机制。在C++中，如果使用`extern "C"`修饰函数，那么函数就无法重载
+```cpp
+#include <iostream>
+using namespace::std
+
+extern "C" void fun()
+{
+  
+}
+extern "C" void fun(int a)
+{
+  
+}
+
+int main()
+{
+
+}
+
+```
+上面的写法编译会报错，提示不允许函数fun的重载
 
 ### 单元测试-googletest
 googletest简称gtest是一个用于c++单元测试的框架。仓库地址[https://github.com/google/googletest.git](https://github.com/google/googletest.git)
