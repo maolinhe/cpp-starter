@@ -5,6 +5,8 @@
 #include "include/FunctionOverload.h"
 #include "gtest/gtest.h"
 #include "include/Reference.h"
+#include "include/DefaultConstructionClass.h"
+#include "include/CopyConstruction.h"
 
 using namespace std;
 
@@ -52,12 +54,36 @@ int main(int argc, char **argv)
     return RUN_ALL_TESTS();
     break;
   case U("reference"):
+  {
     Reference ref;
     ref.basicRef();
     ref.constRef();
     ref.testParamAndReturnRef();
     ref.referenceAndPointer();
     break;
+  }
+  case U("default_construction"):
+  {
+    Animal animal1;
+    cout << "--------------------" << endl;
+    string name("www");
+    Animal animal2(name);
+    break;
+  }
+  case U("copy_construction"):
+  {
+    ClassA classA;
+    cout << "--------------------" << endl;
+    ClassB classB(10, classA);
+    cout << "--------------------" << endl;
+    ClassB copyClassB(classB);
+    cout << "--------------------" << endl;
+    ClassC classC;
+    ClassC copyClassC(classC);
+    copyClassC = classC;
+    ClassC copyClassC2 = classC;
+    break;
+  }
   }
 
   return 0;
