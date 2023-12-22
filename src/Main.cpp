@@ -7,8 +7,11 @@
 #include "include/Reference.h"
 #include "include/DefaultConstructionClass.h"
 #include "include/CopyConstruction.h"
+#include "include/InitialList.h"
+#include "include/Static.h"
 
 using namespace std;
+using namespace InitialList;
 
 int toUnicode(const char *str)
 {
@@ -28,20 +31,24 @@ int main(int argc, char **argv)
   switch (toUnicode(argv[1]))
   {
   case U("namespace"):
+  {
     SpaceA::print();
     SpaceA::SpaceAA::print();
     break;
-
+  }
   case U("std_input_output"):
+  {
     stdInputOutput();
     break;
-
+  }
   case U("default_params"):
+  {
     defaultAllParams();
     defaultPartialParams(5);
     break;
-
+  }
   case U("function_overload"):
+  {
     FunctionOverload fo;
     fo.fun();
     fo.fun(10);
@@ -49,10 +56,13 @@ int main(int argc, char **argv)
     fo.fun(10, "cpp");
     fo.fun("cpp", 10);
     break;
+  }
   case U("test_calculation"):
+  {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
     break;
+  }
   case U("reference"):
   {
     Reference ref;
@@ -83,6 +93,20 @@ int main(int argc, char **argv)
     copyClassC = classC;
     ClassC copyClassC2 = classC;
     break;
+  }
+  case U("initial_list"):
+  {
+    InitialList::T1 t1;
+    cout << "--------------------" << endl;
+    InitialList::T2 t2(t1);
+    cout << "--------------------" << endl;
+    InitialList::T3 t3(t1);
+  }
+  case U("static"):
+  {
+    StaticNamespace::Person person;
+    person.printAge();
+    cout << "person age = " << person.age << endl;
   }
   }
 

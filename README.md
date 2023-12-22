@@ -39,6 +39,9 @@
       - [赋值运算符=](#赋值运算符)
       - [取地址重载](#取地址重载)
       - [const取地址重载](#const取地址重载)
+    - [初始化列表](#初始化列表)
+    - [静态成员static](#静态成员static)
+      - [访问方式](#访问方式)
   - [单元测试-googletest](#单元测试-googletest)
     - [SetUp and TearDown函数](#setup-and-teardown函数)
     - [测试用例宏](#测试用例宏)
@@ -360,7 +363,7 @@ public:
 #### 构造函数
 负责完成对象的初始化，函数名与类名完全相同，创建类对象的时候自动调用，在类的声明周期只调用一次
 ```cpp
-class MyClass 
+class MyClass
 {
 public:
   MyClass()
@@ -443,6 +446,85 @@ MyClass& MyClass::operator=(const MyClass &obj)
 
 #### 取地址重载
 #### const取地址重载
+
+### 初始化列表
+用在类的构造函数中，以一个冒号开始，接着是一个以逗号分隔的数据成员列表，每个成员变量后面跟一个放在括号中的初始值或表达式
+```cpp
+class Person
+{
+private:
+  int age;
+  string name;
+public:
+  MyClass(int age, string name) : age(age), name(name){};
+}
+```
+构造函数执行会有两个阶段：初始化阶段和执行阶段
+* 初始化阶段会对初始化列表中成员和不在列表中的自定义类型
+* 计算阶段会执行函数体
+  
+特性：
+* 每个成员变量在初始化列表只能出现一次
+* 引用成员变量、const成员变量和自定义类型成员变量（该类没有构造函数），必须放在初始化列表进行初始化
+* **尽量使用初始化列表对成员进行初始化**
+  * 对于内置类型，使用初始化列表和构造函数体内进行初始化没有太大差别
+  * 对于自定义的类型，使用初始化列表可以提高代码效率：
+    * 构造函数体内赋初值，先调用默认构造函数初始化自定义类型的成员，然后再通过，然后再通过重载的=赋值
+    * 初始化列表只需要调用一次拷贝构造函数即可
+  ```cpp
+  class T1
+  {
+  public:
+    T1()
+    {
+      cout << "T1 construction" <<endl;
+    }
+    T1(const T1 &t1)
+    {
+      cout << "T1 copy construction" <<endl;
+    }
+    T1& operator=(const T1 &t1)
+    {
+      cout << "T1 operator =" <<endl;
+    }
+  };
+
+  class T2
+  {
+  public:
+    T1 t1; // 先调用T1的默认构造函数初始化t1
+    T2(T1 &t1)
+    {
+      // 再调用T1的重载=赋值
+      this.t1 = t1;
+    }
+  }
+
+  class T3
+  {
+    T1 t1;
+    T3(T1 &t1) : t1(t1) // 只调用一次T1的拷贝构造函数
+    {
+
+    }
+  }
+  ```
+* 成员变量在类中的**声明顺序就是初始化顺序**，与在初始化列表中的先后顺序无关
+* 构造函数体对成员赋值叫做赋初值而不是初始化
+  * 构造函数体可以多次赋初值
+  * 初始化只能有一次
+
+### 静态成员static
+用`static`修饰的成员叫静态成员，包括静态成员变量和静态成员函数
+* 静态成员被所有的类共享，不属于某个具体的对象
+* 静态成员变量必须在类内声明，类外定义（static const int可以直接类内定义），定义时不加`static`关键字
+* 静态成员函数没有隐藏的this指针，因此不能访问任何非静态的成员
+* 存在`public`、`protected`、`private`关键字修饰
+* 静态成员函数可以访问非静态成员，非静态成员函数不可以访问静态成员
+
+#### 访问方式
+* 类名::成员名称（函数或变量）
+* 对象.成员名称
 
 ## 单元测试-googletest
 googletest简称gtest是一个用于c++单元测试的框架。仓库地址[https://github.com/google/googletest.git](https://github.com/google/googletest.git)
