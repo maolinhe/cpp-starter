@@ -9,6 +9,8 @@
 #include "include/CopyConstruction.h"
 #include "include/InitialList.h"
 #include "include/Static.h"
+#include "include/FriendFunction.h"
+#include "include/FriendClass.h"
 
 using namespace std;
 using namespace InitialList;
@@ -107,6 +109,17 @@ int main(int argc, char **argv)
     StaticNamespace::Person person;
     person.printAge();
     cout << "person age = " << person.age << endl;
+  }
+  case U("friend"):
+  {
+    FriendSpace::Box box;
+    box.setHeight(10);
+    box.setWidth(20);
+    FriendSpace::printBox(box);
+    cout << "--------------------" << endl;
+    FriendSpace::FriendBox friendBox(100, 200);
+    FriendSpace::MyClass myClass;
+    myClass.printBox(friendBox);
   }
   }
 

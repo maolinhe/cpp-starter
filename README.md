@@ -42,6 +42,11 @@
     - [初始化列表](#初始化列表)
     - [静态成员static](#静态成员static)
       - [访问方式](#访问方式)
+    - [友元](#友元)
+      - [友元函数](#友元函数)
+      - [友元类](#友元类)
+      - [友元类使用场景](#友元类使用场景)
+    - [内部类](#内部类)
   - [单元测试-googletest](#单元测试-googletest)
     - [SetUp and TearDown函数](#setup-and-teardown函数)
     - [测试用例宏](#测试用例宏)
@@ -525,6 +530,72 @@ public:
 #### 访问方式
 * 类名::成员名称（函数或变量）
 * 对象.成员名称
+
+### 友元
+友元可以打破类的封装性，为编程带来便利，但是友元会增加模块之间的耦合度，因此不建议频繁使用
+
+#### 友元函数
+友元函数定义在类外部，但是有权限访问类的私有和保护成员。要定义一个类的友元函数，需要在类的内部使用关键字`friend`声明, 并将类的对象作为参数传递进去:
+```cpp
+namespace FriendSpace
+{
+    class Box
+    {
+    private:
+        int height;
+        int width;
+
+    public:
+        void setHeight(int height);
+        void setWidth(int width);
+        friend void printBox(Box &box);
+    };
+
+    void printBox(Box &box);
+}
+```
+
+#### 友元类
+一个类被定义成其它类的友元类，该类可以访问其它类的私有和保护成员。在其它类中使用`friend class className`声明一个类为本类的友元类。
+```cpp
+#include <iostream>
+
+using namespace std;
+
+namespace FriendSpace
+{
+    class MyClass;
+    class FriendBox
+    {
+    private:
+        int height;
+        int width;
+
+    public:
+        FriendBox(int height, int width) : height(height), width(width) {}
+        friend class MyClass;
+    };
+
+    class MyClass
+    {
+    public:
+        void printBox(FriendBox &box)
+        {
+            cout << "Box width = " << box.width << ", height = " << box.height << endl;
+        }
+    };
+}
+```
+友元类是单向的，即类A定义为类B的友元类，A可以访问B的私有和保护成员，但是B不是A的友元类，也不能访问A的私有和保护成员。
+
+#### 友元类使用场景
+* 类之间需要共享信息，但是不希望公开
+* 两个类需要紧密结合实现某个功能
+* 需要简化代码提高效率
+
+总之，友元类（包括友元函数）要谨慎使用，因为它会突破类的封装性，增加代码的复杂性，提高模块之间的耦合度。确实需要在外部访问类的私有成员并且无法通过其它手段实现的情况下考虑使用。
+
+### 内部类
 
 ## 单元测试-googletest
 googletest简称gtest是一个用于c++单元测试的框架。仓库地址[https://github.com/google/googletest.git](https://github.com/google/googletest.git)
