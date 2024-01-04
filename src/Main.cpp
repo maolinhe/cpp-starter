@@ -12,6 +12,7 @@
 #include "include/FriendFunction.h"
 #include "include/FriendClass.h"
 #include "include/InnerClass.h"
+#include "include/BasicMemoryAllocation.h"
 
 using namespace std;
 using namespace InitialList;
@@ -126,7 +127,11 @@ int main(int argc, char **argv)
   {
     InnerClassSpace::OutClass out;
     InnerClassSpace::OutClass::InnerClass in;
-    in.print(out); 
+    in.print(out);
+  }
+  case U("basic_memory_allocation"):
+  {
+    MemoryManagerSpace::basicMemoryAllocation();
   }
   }
 

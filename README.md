@@ -49,6 +49,17 @@
       - [友元类使用场景](#友元类使用场景)
     - [内部类](#内部类)
   - [C/C++内存管理](#cc内存管理)
+    - [内存区域说明](#内存区域说明)
+    - [new和delete](#new和delete)
+      - [操作内置类型](#操作内置类型)
+      - [操作自定义类型](#操作自定义类型)
+    - [operator new和operator delete](#operator-new和operator-delete)
+      - [malloc/free和new/delete的区别](#mallocfree和newdelete的区别)
+    - [内存泄漏](#内存泄漏)
+      - [危害](#危害)
+      - [分类](#分类)
+      - [如何避免内存泄漏](#如何避免内存泄漏)
+    - [*如何一次在堆上申请4G的内存*](#如何一次在堆上申请4g的内存)
   - [单元测试-googletest](#单元测试-googletest)
     - [SetUp and TearDown函数](#setup-and-teardown函数)
     - [测试用例宏](#测试用例宏)
@@ -661,8 +672,89 @@ namespace FriendSpace
 ```
 
 ## C/C++内存管理
+操作系统分配内存基本概念：
+* 内存空间时连续开辟的
+* 当开辟内存空间时，内存分配从低位到高位
+* 当往内存存储数据时，是从低位往高位存储
+  ```cpp
+    void basicMemoryAllocation()
+    {
+        int a = 10, b = 20, c = 30, d = 40;
+        cout << "a address = " << &a << endl;
+        cout << "b address = " << &b << endl;
+        cout << "c address = " << &c << endl;
+        cout << "d address = " << &d << endl;
 
+        cout << "b = " << b << endl;
+        cout << "*(&b+1) = " << *(&b - 1) << endl; // 指向a
+        cout << "*(&b+2) = " << *(&b + 1) << endl; // 指向c
+    }
+  ```
 
+### 内存区域说明
+* **内核空间**：存放操作系统的内核代码，用户（应用层程序）无法直接访问，可以通过系统调用的方式进行访问
+* **栈**：用于存放函数执行的参数、非静态的局部变量和返回值等（包括const变量），栈向下增长
+* **内存映射段**：非常高效的I/O映射方式，用于装载一个共享的动态内存库。应用层可以通过系统接口创建共享内存，实现进程通信
+* **堆**：程序运行时的动态内存分配，向上增长
+* **数据段(全局区)**：存储全局数据和静态数据
+* **代码段（代码区和常量区）**：存储可执行代码/只读常量
+  ![Alt text](img/image-1.png)
+
+### new和delete
+#### 操作内置类型
+* 申请/释放基本类型
+  ```cpp
+  int *p = new int;
+  delete p;
+  ```
+* 申请/释放数组
+  ```cpp
+  int *p = new int[10];
+  delete[] p;
+  ```
+* 申请/释放基本类型并初始化
+  ```cpp
+  int *p = new int(10);
+  delete p;
+  ```
+* 申请/释放数组并初始化
+  ```cpp
+  int *p = new int[3]{0, 1, 2};
+  delete[] p;
+  ```
+#### 操作自定义类型
+与基本类型类似
+
+### operator new和operator delete
+operator new和operator delete是系统提供的全局函数，new和delete底层是调用这两个函数完成内存的分配与回收
+* operator new底层通过malloc申请内存，申请成功正常返回，否则抛出异常
+* operator delete底层通过free释放内存
+
+#### malloc/free和new/delete的区别
+* 相同点：都是从堆上申请内存，并且需要手动释放
+* 不同点：
+  * malloc和free是函数，new和delete是操作符
+  * malloc申请内存需要手动计算大小并当作参数传递进去，new只需要说明类型即可
+  * malloc返回void*，需要强转，new不需要
+  * malloc申请失败返回NULL，需要判空，new申请失败抛出异常，因此使用new时需要捕获异常
+  * malloc申请的空间不会初始化，new可以
+  * 对于自定义类对象，malloc/free不会执行构造/析构函数，new会在申请空间成功之后执行类的构造函数，delete会先执行析构函数然后再释放内存
+
+### 内存泄漏
+内存泄漏指的是因为代码程序不规范导致申请的内存脱离了控制而无法再次访问，但是又不会被释放
+#### 危害
+长时间运行的应用程序如果内存泄漏频繁，会导致程序占用内存空间越来越大，系统的内存最终会被消耗殆尽，从而导致程序和系统宕机
+#### 分类
+* 堆内存泄漏：通过malloc/calloc/realloc/new申请的内存没有被释放
+* 系统资源泄漏：程序使用系统分配的资源如socket、文件描述符fd、管道等没有被释放掉
+#### 如何避免内存泄漏
+* 养成良好的设计编码规范，及时正确释放申请的内存空间
+* 采用智能指针
+* 出现内存泄漏使用相应的工具排查
+
+### *如何一次在堆上申请4G的内存*
+* 32位下内存最大4G，堆只占2G左右，因此无法申请
+* 使用64位平台即可一次性申请4G内存
 
 ## 单元测试-googletest
 googletest简称gtest是一个用于c++单元测试的框架。仓库地址[https://github.com/google/googletest.git](https://github.com/google/googletest.git)
