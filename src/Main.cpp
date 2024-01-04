@@ -11,6 +11,7 @@
 #include "include/Static.h"
 #include "include/FriendFunction.h"
 #include "include/FriendClass.h"
+#include "include/InnerClass.h"
 
 using namespace std;
 using namespace InitialList;
@@ -120,6 +121,12 @@ int main(int argc, char **argv)
     FriendSpace::FriendBox friendBox(100, 200);
     FriendSpace::MyClass myClass;
     myClass.printBox(friendBox);
+  }
+  case U("inner_class"):
+  {
+    InnerClassSpace::OutClass out;
+    InnerClassSpace::OutClass::InnerClass in;
+    in.print(out); 
   }
   }
 

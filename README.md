@@ -13,6 +13,7 @@
       - [函数重载原理](#函数重载原理)
       - [extern "C"](#extern-c)
     - [指针](#指针)
+    - [const和static的区别](#const和static的区别)
     - [引用](#引用)
       - [引用的特性](#引用的特性)
       - [常引用](#常引用)
@@ -47,6 +48,7 @@
       - [友元类](#友元类)
       - [友元类使用场景](#友元类使用场景)
     - [内部类](#内部类)
+  - [C/C++内存管理](#cc内存管理)
   - [单元测试-googletest](#单元测试-googletest)
     - [SetUp and TearDown函数](#setup-and-teardown函数)
     - [测试用例宏](#测试用例宏)
@@ -186,8 +188,29 @@ int main()
   ```
 指针可以方便地操作内存，但是容易造成内存泄露的问题，谨慎使用
 
+### const和static的区别
+const定义的常量在超出其作用域之后其空间会被释放，而static定义的静态变量是全局的，不会在某个函数执行结束后被释放
+
 ### 引用
 引用是已存在在内存中的变量的一个别名，编译器不会为引用变量开辟内存空间，它和引用的变量公用同一块内存空间
+* const变量只能通过构造函数初始化列表进行
+* static变量一般在类的内部声明，类外部定义，定义时不能再添加static关键字
+```cpp
+class Test {
+private:
+  const int a; // 只能在构造函数初始化列表中初始化
+  static int b; // 在类的实现文件中定义和初始化
+  const static int c;
+  static const int d;
+public: 
+  Test() : a(0) {}
+  enum {size1 = 100, size2 = 200}
+}
+
+int Test::b = 0; // 在类外部定义类的static静态变量
+const int Test::c = 0;
+const int Test::d = 0;
+```
 
 #### 引用的特性
 * 引用在定义时必须初始化
@@ -596,6 +619,50 @@ namespace FriendSpace
 总之，友元类（包括友元函数）要谨慎使用，因为它会突破类的封装性，增加代码的复杂性，提高模块之间的耦合度。确实需要在外部访问类的私有成员并且无法通过其它手段实现的情况下考虑使用。
 
 ### 内部类
+一个类定义在另一个类的内部，该类就称为内部类
+* 内部类可以定义在外部类的public、protected、private的任何一个区域
+* 内部类是外部类的友元，但是外部类不是内部类的友元
+* 内部类访问外部类
+  * 直接访问外部类的static、枚举，不需要类名或者对象
+  * 可以使用外部类对象参数访问外部类的所有成员（友元）
+* 外部类大小与内部类无关，内部类是一个独立的类，与外部类无关
+```cpp
+    class OutClass
+    {
+    private:
+        int id;
+        static string name;
+        enum Week
+        {
+            Mon,
+            Tue,
+            Wed,
+            Thu,
+            Fri,
+            Sat,
+            Sun
+        };
+
+    public:
+        OutClass() : id(10086) {}
+        class InnerClass
+        {
+        public:
+            void print(const OutClass &out)
+            {
+                // 内部类直接访问外部类的static成员和enum成员，借助类对象访问类的所有成员变量（友元）
+                Week week1 = Sun;
+                cout << "id = " << out.id << ", name = " << name << ", week = " << week1 << endl;
+            }
+        };
+    };
+
+    string OutClass::name = "zhangsan";
+```
+
+## C/C++内存管理
+
+
 
 ## 单元测试-googletest
 googletest简称gtest是一个用于c++单元测试的框架。仓库地址[https://github.com/google/googletest.git](https://github.com/google/googletest.git)
