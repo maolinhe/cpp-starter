@@ -13,6 +13,7 @@
 #include "include/FriendClass.h"
 #include "include/InnerClass.h"
 #include "include/BasicMemoryAllocation.h"
+#include "include/CompareTemplateFunction.h"
 
 using namespace std;
 using namespace InitialList;
@@ -132,6 +133,12 @@ int main(int argc, char **argv)
   case U("basic_memory_allocation"):
   {
     MemoryManagerSpace::basicMemoryAllocation();
+  }
+  case U("compare_template_function"):
+  {
+    cout << TemplateSpace::max(1, 2) << endl;
+    cout << TemplateSpace::max(3.5, 2.1) << endl;
+    cout << TemplateSpace::max('a', 'A') << endl;
   }
   }
 
