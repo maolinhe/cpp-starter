@@ -14,6 +14,7 @@
 #include "include/InnerClass.h"
 #include "include/BasicMemoryAllocation.h"
 #include "include/CompareTemplateFunction.h"
+#include "include/TemplateClass.h"
 
 using namespace std;
 using namespace InitialList;
@@ -138,7 +139,14 @@ int main(int argc, char **argv)
   {
     cout << TemplateSpace::max(1, 2) << endl;
     cout << TemplateSpace::max(3.5, 2.1) << endl;
-    cout << TemplateSpace::max('a', 'A') << endl;
+    cout << TemplateSpace::max<char>('a', 'A') << endl;
+  }
+  case U("compare_template_class"):
+  {
+    TemplateSpace::TemplateClass<int> tc(10);
+    cout << tc.getVal() << endl;
+    tc.setVal(100);
+    cout << tc.getVal() << endl;
   }
   }
 

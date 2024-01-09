@@ -63,10 +63,11 @@
   - [模板（template）](#模板template)
     - [泛型编程](#泛型编程)
     - [函数模板](#函数模板)
+      - [函数模板原理](#函数模板原理)
+      - [函数模板实例化](#函数模板实例化)
+      - [函数模板的匹配原则](#函数模板的匹配原则)
     - [类模板](#类模板)
-    - [模板参数](#模板参数)
-    - [模板的特化](#模板的特化)
-    - [模板的分离编译](#模板的分离编译)
+      - [类模板与继承](#类模板与继承)
     - [模板的优缺点](#模板的优缺点)
   - [单元测试-googletest](#单元测试-googletest)
     - [SetUp and TearDown函数](#setup-and-teardown函数)
@@ -779,11 +780,109 @@ T max(T a, T b)
 }
 ```
 
+#### 函数模板原理
+在编译阶段，根据传入的实参类型推演生成对应类型的函数以供调用
+
+#### 函数模板实例化
+用不同类型的参数使用函数模板称为函数模板的实例化
+* 隐式实例化
+  让编译器根据传入的实参自动推断出实际类型，一般不会产生类型强制转换
+  ```cpp
+  max(10.2, 9.3);
+  ```
+* 显式实例化
+  在函数名后面添加<>指定参数类型，当指定的的参数类型与传入的参数类型不一致的时候，编译器会尝试进行强制类型转换
+  ```cpp
+  max<double>(10.2, 9.3);
+  max<int>(10.2, 9.3); // 强制进行类型转换：float -> int
+  ```
+
+#### 函数模板的匹配原则
+同名的模板函数和非模板函数可以同时存在
+* 如果其它条件相同，会优先调用非模板函数，而不是从模板函数实例化一个新的函数
+* 如果模板函数可以产生一个更好的函数，就使用模板函数
+
 ### 类模板
-### 模板参数
-### 模板的特化
-### 模板的分离编译
+定义模板类
+```cpp
+template <typename T>
+class TemplateClass
+{
+private:
+    T val;
+
+public:
+    TemplateClass(T val) : val(val) {}
+    T &getVal()
+    {
+        return this->val;
+    }
+};
+```
+使用模板类
+```cpp
+TemplateClass<int> tc(10);
+cout << tc.getVal() << endl;
+tc.setVal(100);
+cout << tc.getVal() << endl;
+```
+
+#### 类模板与继承
+* 父类是一般类，子类为模板类：与一般继承一样
+  ```cpp
+  template <typename T>
+  class TemplateSon1 : public Father
+  {
+  private:
+      T sVal;
+
+  public:
+      TemplateSon1(T sVal) : sVal(sVal) {}
+      T &getSVal()
+      {
+          return this->sVal;
+      }
+  };
+  ```
+* 父类是模板类，子类是一般类：需指定父类类型
+  ```cpp
+  class Son : public TemplateFather<double>
+  {
+  private:
+      int sVal;
+
+  public:
+      Son(int sVal) : sVal(sVal), TemplateFather<double>(100) {}
+      int &getSVal()
+      {
+          return this->sVal;
+      }
+  };
+  ```
+* 父类和子类都是模板类：子类虚拟的类型可以传递到父类
+  ```cpp
+  template <typename T>
+  class TemplateSon2 : public TemplateFather
+  {
+  private:
+      T sVal;
+
+  public:
+      TemplateSon1(T sVal) : sVal(sVal) {}
+      T &getSVal()
+      {
+          return this->sVal;
+      }
+  };
+  ```
+
 ### 模板的优缺点
+* 优点：
+  * 代码复用，节省资源，更快地迭代开放，STL标准模板库因此产生
+  * 代码更加灵活
+* 缺点：
+  * 代码膨胀，编译时间边长
+  * 模板编译错误时，错误信息凌乱，不易定位
 
 
 ## 单元测试-googletest
