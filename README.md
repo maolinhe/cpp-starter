@@ -69,6 +69,14 @@
     - [类模板](#类模板)
       - [类模板与继承](#类模板与继承)
     - [模板的优缺点](#模板的优缺点)
+  - [I/O流](#io流)
+    - [标准I/O流](#标准io流)
+    - [文件I/O流](#文件io流)
+      - [文件流对象](#文件流对象)
+      - [文件打开方式](#文件打开方式)
+      - [文件读写操作](#文件读写操作)
+      - [关闭文件](#关闭文件)
+    - [stringstream](#stringstream)
   - [单元测试-googletest](#单元测试-googletest)
     - [SetUp and TearDown函数](#setup-and-teardown函数)
     - [测试用例宏](#测试用例宏)
@@ -862,13 +870,13 @@ cout << tc.getVal() << endl;
 * 父类和子类都是模板类：子类虚拟的类型可以传递到父类
   ```cpp
   template <typename T>
-  class TemplateSon2 : public TemplateFather
+  class TemplateSon2 : public TemplateFather<T>
   {
   private:
       T sVal;
 
   public:
-      TemplateSon1(T sVal) : sVal(sVal) {}
+      TemplateSon2(T sVal) : sVal(sVal) {}
       T &getSVal()
       {
           return this->sVal;
@@ -881,9 +889,159 @@ cout << tc.getVal() << endl;
   * 代码复用，节省资源，更快地迭代开放，STL标准模板库因此产生
   * 代码更加灵活
 * 缺点：
-  * 代码膨胀，编译时间边长
+  * 代码膨胀，编译时间长
   * 模板编译错误时，错误信息凌乱，不易定位
 
+
+## I/O流
+### 标准I/O流
+* 标准输出流：ostream
+  * cout、cerr、clog
+  * 标准文件输出流：ofstream
+  * 标准字符输出流：ostringstream
+* 标准输入流istream
+  * cin
+  * 标准文件输入流：ifstream
+  * 标准字符输入流：istringstream
+* 通用的输入/输出流：iostream
+  * 文件输入/输出：fstream
+  * 字符输入/输出：stringstream
+
+  
+### 文件I/O流
+#### 文件流对象
+* ofstream：只写
+  ```cpp
+  void ofstreamTest()
+  {
+      ofstream ofs("../data/input.txt");
+      if (ofs.is_open())
+      {
+          ofs << "Hello, cpp\n";
+          ofs << "Hello world\n";
+          ofs.close();
+          clog << "Write ok!" << endl;
+      }
+      else
+      {
+          cerr << "File open failed" << endl;
+      }
+  }
+  ```
+* ifstream：只读
+  ```cpp
+  void ifstreamTest()
+  {
+      ifstream ifs("../data/input.txt");
+      char buffer[1024];
+      if (ifs.is_open())
+      {
+          while (!ifs.eof())
+          {
+              /* 第二个参数为最大读取长度 */
+              ifs.getline(buffer, 100);
+              cout << buffer << endl;
+          }
+      }
+      else
+      {
+          cerr << "File open failed" << endl;
+      }
+  }
+  ```
+* fstream：可读可写
+  ```cpp
+  void fstreamTest()
+  {
+      fstream ifs("../data/input.txt", ios::in | ios::binary);
+      fstream ofs("../data/input.txt", ios::out | ios::binary);
+      char buffer[1024];
+      if (ifs.is_open() && ofs.is_open())
+      {
+          while (!ifs.eof())
+          {
+              ifs.getline(buffer, 100);
+              cout << buffer << endl;
+          }
+          ifs.close();
+
+          ofs << "Hello, fstream\n";
+          ofs.sync();// 同步缓存
+          ofs.close();
+      }
+      else
+      {
+          cerr << "File open failed" << endl;
+      }
+  }
+  ```
+
+#### 文件打开方式
+形如`ios::xxx`
+* `ios::in`: 以读方式打开
+* `ios::out`: 以写方式打开
+* `ios::binary`: 以二进制方式对文件进行操作
+* `ios::ate`: 从文件末尾开始输出
+* `ios::app`: 以追加方式写文件
+* `ios::trunc`: 先清空文件内容再打开文件
+
+#### 文件读写操作
+* `put`：插入一个字符
+* `write`：插入一段字符
+* `get`：提取一个字符
+* `read`：提取多个字符
+* `tellg`：获得当前字符在文件中位置
+* `seekg`：设置对文件进行操作的位置
+* `>>`：运算符重载，输入
+* `<<`：运算符重载，输出
+  
+获取二进制文件字节数：
+```cpp
+long getBinarySize()
+{
+    fstream ifs("../data/input.txt", ios::in | ios::binary);
+
+    // 获取起始位置
+    long start = ifs.tellg();
+    // 将游标滑倒文件末尾位置
+    ifs.seekg(0, ios::end);
+    // 获取文件末尾位置
+    long end = ifs.tellg();
+    ifs.close();
+
+    long size = end - start;
+    cout << "File size is " << size << " bytes" << endl;
+    return size;
+}
+```
+
+#### 关闭文件
+使用`close()`函数关闭流。使用完流记得要关闭
+
+### stringstream
+* 其它数据类型转换为字符串类型
+* 字符串拼接
+  ```cpp
+  void stringstreamTest()
+  {
+      int val = 10086;
+      string str;
+
+      // 将int转为string
+      stringstream ss;
+      ss << val;
+      ss >> str;
+      cout << str << endl;
+
+      // 拼接字符串
+      ss.clear(); // 不会清空流中内容，只是重置了流的状态标志
+      ss.str(""); // 清除流中内容
+      ss << "Hello"
+          << ", "
+          << "cpp" << endl;
+      cout << ss.str();
+  }
+  ```
 
 ## 单元测试-googletest
 googletest简称gtest是一个用于c++单元测试的框架。仓库地址[https://github.com/google/googletest.git](https://github.com/google/googletest.git)

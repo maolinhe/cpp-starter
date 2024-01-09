@@ -57,7 +57,7 @@ namespace TemplateSpace
         T sVal;
 
     public:
-        TemplateSon1(T sVal) : sVal(sVal) {}
+        TemplateSon1(T sVal) : sVal(sVal), Father(100) {}
         T &getSVal()
         {
             return this->sVal;
@@ -78,15 +78,15 @@ namespace TemplateSpace
         }
     };
 
-    // 父类是模板类，子类是模板类 子类虚类型可以传递到父类中
+    //父类是模板类，子类是模板类 子类虚类型可以传递到父类中
     template <typename T>
-    class TemplateSon2 : public TemplateFather
+    class TemplateSon2 : public TemplateFather<T>
     {
     private:
         T sVal;
 
     public:
-        TemplateSon1(T sVal) : sVal(sVal) {}
+        TemplateSon2(T sVal) : sVal(sVal) {}
         T &getSVal()
         {
             return this->sVal;

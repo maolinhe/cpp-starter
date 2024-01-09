@@ -15,6 +15,7 @@
 #include "include/BasicMemoryAllocation.h"
 #include "include/CompareTemplateFunction.h"
 #include "include/TemplateClass.h"
+#include "include/IOStream.h"
 
 using namespace std;
 using namespace InitialList;
@@ -147,6 +148,19 @@ int main(int argc, char **argv)
     cout << tc.getVal() << endl;
     tc.setVal(100);
     cout << tc.getVal() << endl;
+  }
+  case U("standard_io_test"):
+  {
+    cout << "----------ofstream----------" << endl;
+    IOSpace::ofstreamTest();
+    cout << "----------ifstream----------" << endl;
+    IOSpace::ifstreamTest();
+    cout << "----------fstream----------" << endl;
+    IOSpace::fstreamTest();
+    cout << "----------get binary file size----------" << endl;
+    IOSpace::getBinarySize();
+    cout << "----------test stringstream----------" << endl;
+    IOSpace::stringstreamTest();
   }
   }
 
