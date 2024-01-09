@@ -1,6 +1,6 @@
 #include <iostream>
 
-void std_input_output()
+void stdInputOutput()
 {
   int val;
   std::cin >> val;
