@@ -16,6 +16,7 @@
 #include "include/CompareTemplateFunction.h"
 #include "include/TemplateClass.h"
 #include "include/IOStream.h"
+#include "include/ExtentionClass.h"
 
 using namespace std;
 using namespace InitialList;
@@ -161,6 +162,23 @@ int main(int argc, char **argv)
     IOSpace::getBinarySize();
     cout << "----------test stringstream----------" << endl;
     IOSpace::stringstreamTest();
+  }
+  case U("access_of_extention"):
+  {
+    ExtentionSpace::SubClass1 subClass1;
+    ExtentionSpace::SubClass2 subClass2;
+    ExtentionSpace::SubClass3 subClass3;
+
+    subClass1.fun();
+    subClass2.fun();
+    subClass3.fun();
+  }
+  case U("deafult_methods_call_of_extention"):
+  {
+    ExtentionSpace::SubClass4 obj1;
+    cout << "---------------------" << endl;
+    ExtentionSpace::SubClass4 obj2 = obj1;
+    cout << "---------------------" << endl;
   }
   }
 
