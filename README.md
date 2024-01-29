@@ -97,6 +97,9 @@
       - [静态绑定和动态绑定](#静态绑定和动态绑定)
       - [多继承中的虚表](#多继承中的虚表)
     - [常见问题](#常见问题)
+  - [C++11](#c11)
+    - [列表的统一初始化](#列表的统一初始化)
+    - [auto](#auto)
   - [单元测试-googletest](#单元测试-googletest)
     - [SetUp and TearDown函数](#setup-and-teardown函数)
     - [测试用例宏](#测试用例宏)
@@ -1191,6 +1194,45 @@ virtual void function() = 0;
 * 对象访问普通函数快还是虚函数快？
   
   访问普通函数更快。因为访问虚函数，首先通过虚表指针找到虚表，再从虚表中找到虚函数的地址，再根据虚函数地址找到代码块中的虚函数。
+
+## C++11
+### 列表的统一初始化
+```cpp
+void initVar()
+{
+    int x1 = {1};
+    int array1[]{1, 2, 3};
+    int array2[5]{0}; // 以0初始化数组长度为5的数组
+    int *p1 = new int[3]{1, 2, 3};
+    int *p2 = new int[5]{0};
+    // STL容器支持列表初始化是因为C++11新增了initializer_list容器
+    vector<int> vec1 = {1, 2, 3};
+    list<int> list1 = {1, 2, 3};
+}
+```
+
+### auto
+auto是一种类型的声明，相当于占位符，编译器在编译阶段会将其替换为具体的类型
+* auto修饰指针加不加*效果一样
+* auto修饰引用必须加&
+* 必须对auto修饰的变量进行初始化，因为在编译阶段需要进行类型推导
+* auto不能用于函数的参数，不能直接用来声明数组
+```cpp
+void autoTest()
+{
+    // auto 修饰指针时， 加不加*效果一样
+    // auto修饰变量必须初始化，因为要进行类型推导
+    auto p1 = new int[3]{1, 2, 3};
+    auto *p2 = new int(4);
+    cout << "p1[1] = " << *(p1 + 1) << ", p2 = " << *p2 << endl;
+
+    // auto修饰引用必须加&，否则会被当做普通变量
+    auto &r1 = *p1;
+    cout << "r1 = " << r1 << endl;
+
+    // auto不能作为函数参数，不能直接用来声明数组
+}
+```
 
 ## 单元测试-googletest
 googletest简称gtest是一个用于c++单元测试的框架。仓库地址[https://github.com/google/googletest.git](https://github.com/google/googletest.git)

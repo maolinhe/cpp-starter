@@ -18,6 +18,7 @@
 #include "include/IOStream.h"
 #include "include/ExtentionClass.h"
 #include "include/Polymorphic.h"
+#include "include/Cpp11.h"
 
 using namespace std;
 using namespace InitialList;
@@ -194,6 +195,11 @@ int main(int argc, char **argv)
 
     PolymorphicSpace::Shape &shape2 = rectangle;
     shape2.printArea();
+  }
+  case U("test_cpp11"):
+  {
+    Cpp11Space::initVar();
+    Cpp11Space::autoTest();
   }
   }
 
