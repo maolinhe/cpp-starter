@@ -17,6 +17,7 @@
 #include "include/TemplateClass.h"
 #include "include/IOStream.h"
 #include "include/ExtentionClass.h"
+#include "include/Polymorphic.h"
 
 using namespace std;
 using namespace InitialList;
@@ -179,6 +180,20 @@ int main(int argc, char **argv)
     cout << "---------------------" << endl;
     ExtentionSpace::SubClass4 obj2 = obj1;
     cout << "---------------------" << endl;
+  }
+  case U("polymorphic"):
+  {
+    PolymorphicSpace::Rectangle rectangle(3, 5);
+    PolymorphicSpace::Circle cirlce(4);
+
+    PolymorphicSpace::Shape *shape1 = &rectangle;
+    shape1->printArea();
+
+    shape1 = &cirlce;
+    shape1->printArea();
+
+    PolymorphicSpace::Shape &shape2 = rectangle;
+    shape2.printArea();
   }
   }
 
