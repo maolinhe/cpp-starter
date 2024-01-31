@@ -1365,6 +1365,13 @@ int b = std::move(a);
   * 传入地址
   * 使用lambda表达式，通过捕捉列表以引用方式传入外部实参
 #### 互斥量库
+* mutex库
+  * mutex
+  * recursive_mutex
+  * timed_mutex
+  * recursive_timed_mutex
+  * lock_guard
+  * unique_lock
 #### 原子操作库
 #### 条件变量库
 
