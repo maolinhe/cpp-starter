@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <thread>
 
 using namespace std;
 
@@ -31,5 +32,117 @@ namespace Cpp11Space
         cout << "r1 = " << r1 << endl;
 
         // auto不能作为函数参数，不能直接用来声明数组
+        // auto badArryay[]{1,2,3}; // 'auto' type cannot appear in top-level array typeC/C++(1589)
+    }
+
+    void nullptrTest()
+    {
+        cout << "sizeof(nullptr) = " << sizeof(nullptr) << ", sizeof((void *)0)=" << sizeof((void *)0) << endl;
+    }
+
+    class ExplicitTest
+    {
+    private:
+        int a;
+
+    public:
+        explicit ExplicitTest(int a) : a(a) {}
+    };
+
+    void STLTest()
+    {
+        string s("1");
+        int i1 = std::stoi(s);
+        long l1 = std::stol(s);
+        unsigned long ul1 = std::stoul(s);
+        long long ll1 = std::stoll(s);
+        float f1 = std::stof(s);
+        double d1 = std::stod("1.2");
+        cout << i1 << ", " << l1 << ", " << ul1 << ", " << ll1 << ", " << f1 << ", " << d1 << endl;
+    }
+
+    void threadTest()
+    {
+        // 默认无参的构造函数，啥也不做
+        // thread t1;
+
+        // thread t2([]
+        //           { cout << "Hello thread 2" << endl; });
+        // t1.join();
+        // t2.join();
+
+        // thread t3([](unsigned int threadId, int num)
+        //           {
+        //     for(int i=0; i<num; i++)
+        //     {
+        //         cout<<"thread "<<threadId<<": "<<i<<endl;
+        //         // sleep(1);
+        //     } },
+        //           3, 10000);
+        // thread t4([](unsigned int threadId, int num)
+        //           {
+        //     for(int i=0; i<num; i++)
+        //     {
+        //         cout<<"thread "<<threadId<<": "<<i<<endl;
+        //         // sleep(1);
+        //     } },
+        //           4, 10000);
+
+        // t3.join();
+        // t4.join();
+
+        int acc = {0};
+        int cnt = 10000000;
+        thread t5([&acc, cnt]
+                  {
+                      for (int i = 0; i < cnt; i++)
+                      {
+                          acc++;
+                      } });
+        thread t6([&acc, cnt]
+                  {
+                      for (int i = 0; i < cnt; i++)
+                      {
+                          acc++;
+                      } });
+        t5.join();
+        t6.join();
+
+        cout << "acc = " << acc << endl;
+
+        // test thread joinable
+        thread t7([]
+                  {
+                    cout << "thread 7" << endl;
+                    this_thread::sleep_for(chrono::seconds(1)); });
+        cout << "t7.joinable = " << t7.joinable() << endl;
+        t7.join();
+        cout << "t7.joinable = " << t7.joinable() << endl;
+        cout << "-------------------------------------" << endl;
+
+        // test thread detach
+        thread t8([]
+                  {
+                    cout<<"t8 start"<<endl;
+                    thread t81([]
+                                {
+                    cout<<"thread 81 started"<<endl;
+                    this_thread::sleep_for(chrono::seconds(4));
+                    cout<<"thread 81 end"<<endl; });
+
+                    t81.detach(); 
+                    // t81.join();
+                    
+                    this_thread::sleep_for(chrono::seconds(2));
+                    cout<<"t8 end"<<endl; });
+
+        t8.join();
+
+        // get thread id
+        thread t9([]{
+            cout<<"thread 9 id = "<<this_thread::get_id()<<endl;
+        });
+        cout<<"thread 9 id = "<<t9.get_id()<<endl;
+        t9.join();
     }
 }

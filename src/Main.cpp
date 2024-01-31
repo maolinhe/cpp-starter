@@ -200,6 +200,13 @@ int main(int argc, char **argv)
   {
     Cpp11Space::initVar();
     Cpp11Space::autoTest();
+    Cpp11Space::nullptrTest();
+
+    // error: conversion from ‘int’ to non-scalar type ‘Cpp11Space::ExplicitTest’ requested
+    // Cpp11Space::ExplicitTest et1 = 1;
+
+    Cpp11Space::STLTest();
+    Cpp11Space::threadTest();
   }
   }
 
