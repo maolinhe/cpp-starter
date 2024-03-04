@@ -252,8 +252,8 @@ int main()
   ```cpp
   int a= 10;
   int *pa = &a;
-  int *pa = &pa;
-  cout << **pa << endl;
+  int *ppa = &pa;
+  cout << **ppa << endl;
   ```
 指针可以方便地操作内存，但是容易造成内存泄露的问题，谨慎使用
 
