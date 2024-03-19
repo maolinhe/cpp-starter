@@ -3,6 +3,7 @@
 #include <list>
 #include <thread>
 #include <mutex>
+#include <atomic>
 
 using namespace std;
 
@@ -207,5 +208,37 @@ namespace Cpp11Space
 
         cout << "acc = " << acc << endl;
         cout << "end unique_lock test-------------------------------------" << endl;
+    }
+
+    void atomicTest()
+    {
+        cout << "start atomic test-------------------------------------" << endl;
+        atomic_int v1 = {0}; 
+        atomic<int> v2 = {0};
+
+        thread t1([&v1, &v2]{
+            for (int i = 0; i < 1000000; i++)
+            {
+                v1++;
+                // featch_add 只有int才有
+                v2.fetch_add(1);
+            }
+            
+        });
+        thread t2([&v1, &v2]{
+            for (int i = 0; i < 1000000; i++)
+            {
+                v1+=1;
+                v2.fetch_add(1);
+            }
+            
+        });
+
+        t1.join();
+        t2.join();
+
+        cout << "v1 = " << v1 << endl;
+        cout << "v2 = " << v2 << endl;
+        cout << "end atomic test-------------------------------------" << endl;
     }
 }

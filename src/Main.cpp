@@ -209,6 +209,7 @@ int main(int argc, char **argv)
     Cpp11Space::threadTest();
     Cpp11Space::mutexTest();
     Cpp11Space::uniqueLockTest();
+    Cpp11Space::atomicTest();
   }
   }
 

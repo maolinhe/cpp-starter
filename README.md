@@ -1401,9 +1401,29 @@ int b = std::move(a);
   ```
   **区别：**
   unique_lock和lock_guard都可以实现自动加锁和自动解锁，但是unique_lock更加灵活，它提供了unlock和lock接口，可以在对象初始化之后手动加解锁。一般使用unique_lock更多。
-  
+
 #### 原子操作库
+原子类不需要手动加解锁就可以让多线程对同一个对象同时进行读写操作。
+* 使用原子类型定义原子变量
+  ```cpp
+  atomic_bool v1 = {true};
+  atomic_int v2 = {10};
+  atomic_char v3 = {'A'};
+  ```
+* 使用atomic类模板定义原子变量
+  ```cpp
+  atomic<bool> v1 = {true};
+  atomic<int> v2 = {10};
+  atomic<char> v3 = {'A'};
+  ```
 #### 条件变量库
+* wait
+  * 使用wait系列函数让调用线程等待，包括wait，wait_for和wait_util
+  * 使用wait需要传入一个互斥锁，且必须是unique_lock
+* notify
+  * 唤醒等待线程，包括notify_one和notify_all
+  * notify_one随机唤醒等待队列中的某个线程，如果线程为空怎么什么也不做
+  * notify_all唤醒队列中的所有线程，但是被唤醒的线程需要重新竞争锁，如果等待队列为空则什么也不做
 
 
 
