@@ -112,6 +112,14 @@
       - [互斥量库](#互斥量库)
       - [原子操作库](#原子操作库)
       - [条件变量库](#条件变量库)
+  - [异常](#异常)
+    - [异常的用法](#异常的用法)
+      - [异常的捕获与抛出](#异常的捕获与抛出)
+      - [异常重写抛出](#异常重写抛出)
+      - [异常安全](#异常安全)
+      - [异常的一些规范](#异常的一些规范)
+    - [常用C++标准异常库](#常用c标准异常库)
+    - [异常的优缺点](#异常的优缺点)
   - [单元测试-googletest](#单元测试-googletest)
     - [SetUp and TearDown函数](#setup-and-teardown函数)
     - [测试用例宏](#测试用例宏)
@@ -1426,6 +1434,72 @@ int b = std::move(a);
   * notify_all唤醒队列中的所有线程，但是被唤醒的线程需要重新竞争锁，如果等待队列为空则什么也不做
 
 
+
+## 异常
+异常是面向对象程序语言常用的一种错误处理方式，当一个函数发现自己无法处理的错误时就可以抛出异常，让函数直接或者间接的调用者处理这个错误。
+```cpp
+try
+{
+  // 正常的代码逻辑
+}
+catch(ExceptionName1 ex)
+{
+  //处理异常diamagnetic逻辑
+}
+catch(ExceptionName2 ex)
+{
+  //处理异常diamagnetic逻辑
+}
+...// try后可以跟多个catch捕获多种不同的异常
+```
+
+### 异常的用法
+#### 异常的捕获与抛出
+* 异常是一个对象，异常对象的类型决定那个catch被激活，没有任何catch被激活，程序会报错终止
+* 被激活的catch块是与异常类型匹配且最先声明的那个
+* 抛出异常对象是临时对象，会生成一个异常对象的拷贝，该拷贝在catch之后被销毁
+* catch(...)可以捕获任意类型的异常，但无法确定其类型
+* 可以使用基类捕获派生类的异常对象
+* 异常抛出会寻找当前栈的catch块，如果没有再寻找上层调用栈的catch块，直到达到main的函数栈，main中如果还没有就会报错退出程序
+
+#### 异常重写抛出
+catch块中不能完全处理完异常，在经过一些校正之后重新抛给外层的函数栈处理，可用throw抛出，此时可以不用指定异常对象
+
+#### 异常安全
+* 建议不要在构造函数中抛出异常，否则可能会导致对象无法初始化
+* 建议不要在析构函数中抛出异常，否则可能会导致资源泄露
+* C++经常会出现内存泄漏问题，可以使用RAII（Resource Acquisition Is Initialization）方式解决
+
+#### 异常的一些规范
+* 在函数后面接throw(type1, type2, ...)表示该函数可能会抛出的异常类型
+* 在函数后面接throw()或noexcept表示该函数不抛出异常
+* 若函数后面不接任何异常声明，表示函数可以抛出任何类型的异常
+  
+### 常用C++标准异常库
+* std::exception
+* std::bad_alloc
+* std::bad_cast
+* std::bad_exception
+* std::bad_typeid
+* std::logic_error
+* std::domain_error
+* std::invalid_argument
+* std::length_error
+* std::out_of_range
+* std::runtime_error
+* std::overflow_error
+* std::range_wrror
+* std::underflow_error
+
+### 异常的优缺点
+* 优点
+  * 详细展示错误信息，可以保护堆栈调用信息
+  * 方便集成使用了异常的第三方库，如boost、gtest以及gmock
+  * 对于部分函数友好，比如T& operator等
+* 缺点
+  * 可能会导致程序执行流程混乱，不利于debug
+  * 存在性能开销
+  * 容易导致死锁、内存泄漏等问题
 
 ## 单元测试-googletest
 googletest简称gtest是一个用于c++单元测试的框架。仓库地址[https://github.com/google/googletest.git](https://github.com/google/googletest.git)
