@@ -2,6 +2,7 @@
 #include <vector>
 #include <list>
 #include <thread>
+#include <mutex>
 
 using namespace std;
 
@@ -144,5 +145,67 @@ namespace Cpp11Space
         });
         cout<<"thread 9 id = "<<t9.get_id()<<endl;
         t9.join();
+    }
+
+    void mutexTest()
+    {
+        cout << "start mutex test-------------------------------------" << endl;
+        int acc = {0};
+        int cnt = 10000000;
+
+        mutex mtx;
+        thread t1([&acc, cnt, &mtx]{
+            for(int i = 0; i < cnt; i++)
+            {
+                mtx.lock();
+                acc++;
+                mtx.unlock();
+            }
+        });
+        thread t2([&acc, cnt, &mtx]{
+            for(int i = 0; i < cnt; i++)
+            {
+                mtx.lock();
+                acc++;
+                mtx.unlock();
+            }
+        });
+
+        t1.join();
+        t2.join();
+
+        cout << "acc = " << acc << endl;
+        cout << "end mutex test-------------------------------------" << endl;
+    }
+
+    std::mutex mtx;
+    void uniqueLockTest()
+    {
+        cout << "start unique_lock test-------------------------------------" << endl;
+
+        int acc = {0};
+        int cnt = {10000000};
+        
+        thread t1([&acc, cnt, mtx]{
+            for(int i=0; i<cnt; i++)
+            {
+                unique_lock<mutex> uLock(mtx);
+                acc++;
+            }
+        });
+
+        thread t2([&acc, cnt, mtx]{
+            for(int i=0; i<cnt; i++)
+            {
+                unique_lock<mutex> uLock(mtx);
+                acc++;
+            }
+        });
+
+        t1.join();
+        t2.join();
+
+        cout << "acc = " << acc << endl;
+        cout << "end unique_lock test-------------------------------------" << endl;
     }
 }

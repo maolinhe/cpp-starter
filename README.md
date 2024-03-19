@@ -1367,12 +1367,41 @@ int b = std::move(a);
   * 使用lambda表达式，通过捕捉列表以引用方式传入外部实参
 #### 互斥量库
 * mutex库
-  * mutex
-  * recursive_mutex
-  * timed_mutex
-  * recursive_timed_mutex
-  * lock_guard
-  * unique_lock
+  mutex是C++11中的互斥量，C++11中多线程并发相关的类（如锁）都定义在mutex头文件中，使用的时候需要包含该头文件
+  ```cpp
+  #include<mutex>
+  ```
+  C++11存在四种不同语义的互斥量：独占式互斥量（std::mutex）、带超时的独占式互斥量（std::timed_mutex）、递归互斥量（std::recursive_mutex）以及带超时的递归互斥量（std::recursive_timed_mutex）
+  * std::mutex：不允许拷贝构造和move拷贝，当前线程重复获取同一个锁对象会死锁
+    * 调用std::mutex.lock()会尝试加锁，如果当前锁对象已经被锁住，线程会被阻塞
+    * 调用std::mutex.try_lock()会尝试加锁，如果当前锁对象已经被锁住，线程不会被阻塞
+    * 调用std::mutex.unlock()会释放锁
+  * std::recursive_mutex：ke可重入锁，当前线程重复获取同一个锁对象不会死锁
+  * std::timed_mutex：相比std::mutex多了两个超时获取锁的接口，try_lock_for()和try_lock_util()
+  * std::recursive_timed_mutex：可以重复获取同一个锁对象的超时mutex
+
+  为了安全访问临界区的资源，避免内存泄漏，以上四个mutex在项目中很少使用，用的较多的是lock_guard和unique_lock，他们使用构造函数和析构函数实现加锁和解锁，构造函数加锁，析构函数解锁
+  * lock_guard/unique_lock
+  ```cpp
+    thread t1([&acc, cnt, mtx]{
+        for(int i=0; i<cnt; i++)
+        {
+            unique_lock<mutex> uLock(mtx);
+            acc++;
+        }
+    });
+
+    thread t2([&acc, cnt, mtx]{
+        for(int i=0; i<cnt; i++)
+        {
+            lock_guard<mutex> uLock(mtx);
+            acc++;
+        }
+    });
+  ```
+  **区别：**
+  unique_lock和lock_guard都可以实现自动加锁和自动解锁，但是unique_lock更加灵活，它提供了unlock和lock接口，可以在对象初始化之后手动加解锁。一般使用unique_lock更多。
+  
 #### 原子操作库
 #### 条件变量库
 
