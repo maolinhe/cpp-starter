@@ -136,6 +136,7 @@
     - [C语言的类型转换](#c语言的类型转换)
     - [C++的类型转换](#c的类型转换)
     - [RTTI(运行时类型识别)](#rtti运行时类型识别)
+    - [STL(Standard Template Library)标准模板库](#stlstandard-template-library标准模板库)
   - [单元测试-googletest](#单元测试-googletest)
     - [SetUp and TearDown函数](#setup-and-teardown函数)
     - [测试用例宏](#测试用例宏)
@@ -1677,6 +1678,49 @@ C++98设置拷贝构造/拷贝赋值为private，C++11在拷贝构造和拷贝�
 * typeid: 运行时识别出一个对象的类型
 * dynamic_cast：运行时识别出一个父类指针（或引用）指向的是父类对象还是子类对象
 * decltype：在运行时识别出一个表达式或函数的返回值类型
+
+### STL(Standard Template Library)标准模板库
+标准模板库采用泛型编程思想对常见的数据结构和算法进行包装
+
+* 容器
+  * 序列式容器
+    * array
+    * bitset
+    * string
+    * vector
+    * forwoard_list
+    * list
+    * deque
+  * 关联式容器
+    * 红黑树结构
+      * map
+      * set
+      * multimap
+      * multiset
+    * 哈希结构
+      * unordered_map
+      * unordered_set
+      * unordered_multimap
+      * unordered_multiset
+* 算法
+  * sort
+  * reverse
+  * merge
+  * find
+  * max/min
+  * next_permutation
+  * prev_permutation
+* 迭代器
+* 适配器
+  * 容器适配器
+    * stack
+    * queue
+    * priority_queue
+  * 迭代器适配器
+  * 函数适配器
+* 仿函数/函数对象
+* 空间配置器
+
 
 
 ## 单元测试-googletest
