@@ -4,6 +4,7 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <memory>
 
 using namespace std;
 
@@ -141,10 +142,9 @@ namespace Cpp11Space
         t8.join();
 
         // get thread id
-        thread t9([]{
-            cout<<"thread 9 id = "<<this_thread::get_id()<<endl;
-        });
-        cout<<"thread 9 id = "<<t9.get_id()<<endl;
+        thread t9([]
+                  { cout << "thread 9 id = " << this_thread::get_id() << endl; });
+        cout << "thread 9 id = " << t9.get_id() << endl;
         t9.join();
     }
 
@@ -155,22 +155,22 @@ namespace Cpp11Space
         int cnt = 10000000;
 
         mutex mtx;
-        thread t1([&acc, cnt, &mtx]{
+        thread t1([&acc, cnt, &mtx]
+                  {
             for(int i = 0; i < cnt; i++)
             {
                 mtx.lock();
                 acc++;
                 mtx.unlock();
-            }
-        });
-        thread t2([&acc, cnt, &mtx]{
+            } });
+        thread t2([&acc, cnt, &mtx]
+                  {
             for(int i = 0; i < cnt; i++)
             {
                 mtx.lock();
                 acc++;
                 mtx.unlock();
-            }
-        });
+            } });
 
         t1.join();
         t2.join();
@@ -186,22 +186,22 @@ namespace Cpp11Space
 
         int acc = {0};
         int cnt = {10000000};
-        
-        thread t1([&acc, cnt, mtx]{
-            for(int i=0; i<cnt; i++)
-            {
-                unique_lock<mutex> uLock(mtx);
-                acc++;
-            }
-        });
 
-        thread t2([&acc, cnt, mtx]{
+        thread t1([&acc, cnt, mtx]
+                  {
             for(int i=0; i<cnt; i++)
             {
                 unique_lock<mutex> uLock(mtx);
                 acc++;
-            }
-        });
+            } });
+
+        thread t2([&acc, cnt, mtx]
+                  {
+            for(int i=0; i<cnt; i++)
+            {
+                unique_lock<mutex> uLock(mtx);
+                acc++;
+            } });
 
         t1.join();
         t2.join();
@@ -213,26 +213,24 @@ namespace Cpp11Space
     void atomicTest()
     {
         cout << "start atomic test-------------------------------------" << endl;
-        atomic_int v1 = {0}; 
+        atomic_int v1 = {0};
         atomic<int> v2 = {0};
 
-        thread t1([&v1, &v2]{
-            for (int i = 0; i < 1000000; i++)
-            {
-                v1++;
-                // featch_add 只有int才有
-                v2.fetch_add(1);
-            }
-            
-        });
-        thread t2([&v1, &v2]{
-            for (int i = 0; i < 1000000; i++)
-            {
-                v1+=1;
-                v2.fetch_add(1);
-            }
-            
-        });
+        thread t1([&v1, &v2]
+                  {
+                      for (int i = 0; i < 1000000; i++)
+                      {
+                          v1++;
+                          // featch_add 只有int才有
+                          v2.fetch_add(1);
+                      } });
+        thread t2([&v1, &v2]
+                  {
+                      for (int i = 0; i < 1000000; i++)
+                      {
+                          v1 += 1;
+                          v2.fetch_add(1);
+                      } });
 
         t1.join();
         t2.join();
@@ -240,5 +238,54 @@ namespace Cpp11Space
         cout << "v1 = " << v1 << endl;
         cout << "v2 = " << v2 << endl;
         cout << "end atomic test-------------------------------------" << endl;
+    }
+
+    void smartPointerTest()
+    {
+        cout << "Start to test smart pointer----------------------------" << endl;
+        // auto_ptr(deprecated)
+        int *v1 = new int(10);
+        auto_ptr<int> ap1(v1);
+        (*ap1)++;
+        cout << "*ap1 = " << *ap1 << endl;
+        auto_ptr<int> ap2(ap1); // ap1 will be released
+        (*ap2)++;
+        cout << "*ap2 = " << *ap2 << "; ap1 is nullptr?: " << (ap1.get()) << endl;
+
+        auto_ptr<int> ap3 = ap2; // ap2 will be released
+        (*ap3)++;
+        cout << "*ap3 = " << *ap3 << "; ap2 is nullptr?: " << (ap2.get()) << endl;
+
+        // unique_ptr
+        int *v2 = new int(20);
+        unique_ptr<int> up1(v2);
+        (*up1)++;
+        cout << "*up1 = " << *up1 << endl;
+        // unique_ptr<int> up2(up1); //error: use of deleted function ‘std::unique_ptr
+        // unique_ptr<int> up3 = up1; //error: use of deleted function ‘std::unique_ptr
+
+        // shared_ptr
+        int *v3 = new int(30);
+        shared_ptr<int> sp1(v3);
+        (*sp1)++;
+        cout << "*sp1 = " << *sp1 << endl;
+        shared_ptr<int> sp2(sp1);
+        (*sp2)++;
+        cout << "*sp2 = " << *sp2 << "; sp1 is nullptr?: " << (sp1.get()) << endl;
+        shared_ptr<int> sp3(sp2);
+        (*sp3)++;
+        cout << "*sp3 = " << *sp3 << "; sp2 is nullptr?: " << (sp2.get()) << endl;
+        cout << "shared pointer of *v3 usage count = " << sp3.use_count() << endl;
+
+        //weak_ptr
+        int *v4 = new int(40);
+        shared_ptr<int> tmp_sp(v4);
+        cout << "shared pointer of *v4 usage count = " << tmp_sp.use_count() << endl;
+        weak_ptr<int> wp1(tmp_sp);
+        (*wp1.lock())++;
+        cout << "*wp1 = " << *wp1.lock() << endl;
+        cout << "weak pointer of *v4 usage count = " << wp1.lock().use_count() << endl;
+
+        cout << "End to test smart pointer----------------------------" << endl;
     }
 }
