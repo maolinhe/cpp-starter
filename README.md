@@ -126,6 +126,16 @@
     - [unique\_ptr](#unique_ptr)
     - [shared\_ptr](#shared_ptr)
     - [weak\_ptr](#weak_ptr)
+  - [特殊的类设计](#特殊的类设计)
+    - [只能在堆上创建对象](#只能在堆上创建对象)
+    - [只能在栈上创建对象](#只能在栈上创建对象)
+    - [不能被拷贝](#不能被拷贝)
+    - [不能被继承](#不能被继承)
+    - [单例模式](#单例模式)
+  - [类型转换](#类型转换)
+    - [C语言的类型转换](#c语言的类型转换)
+    - [C++的类型转换](#c的类型转换)
+    - [RTTI(运行时类型识别)](#rtti运行时类型识别)
   - [单元测试-googletest](#单元测试-googletest)
     - [SetUp and TearDown函数](#setup-and-teardown函数)
     - [测试用例宏](#测试用例宏)
@@ -1548,6 +1558,125 @@ catch块中不能完全处理完异常，在经过一些校正之后重新抛给
 * 拷贝构造/赋值函数参数为shared_ptr对象
 * 必须和shared_ptr搭配使用
 * 未重载*和->, 使用lock()函数获得shared_ptr对象实例来访问资源
+
+
+## 特殊的类设计
+### 只能在堆上创建对象
+C++98将构造函数设置为私有，C++11在构造函数后加上=delete，向外部提供一个获取对象的static接口，该接口在堆上创建一个对象并返回
+
+### 只能在栈上创建对象
+* 方法一：C++98将构造函数设置为私有，C++11在构造函数后加上=delete，向外部提供一个获取对象的static接口，该接口在栈上创建一个对象并返回
+* 方法二：屏蔽operator new函数和operator delete函数
+* 方法一和方法二一起使用
+
+### 不能被拷贝
+C++98设置拷贝构造/拷贝赋值为private，C++11在拷贝构造和拷贝赋值后加上=delete
+
+### 不能被继承
+* C++98将构造函数设置为private，因为子类构造函数被调用时，要调用父类构造函数，设置父类构造函数private后无法调用，因此子类无法实例化对象
+* C++11使用final关键字修饰类
+
+### 单例模式
+* 饿汉模式
+  ```cpp
+    class HungrySingleton
+    {
+    private:
+        HungrySingleton()
+        {
+            cout << "Hungry singleton constructed" << endl;
+        }
+        HungrySingleton(const HungrySingleton &singleton) = delete;
+        HungrySingleton &operator=(const HungrySingleton &) = delete;
+
+        static HungrySingleton *singleton;
+
+    public:
+        static HungrySingleton *getInstance()
+        {
+            return singleton;
+        }
+    };
+    HungrySingleton *HungrySingleton::singleton = new HungrySingleton();
+  ```
+* 懒汉模式
+  ```cpp
+  class LazySingleton
+    {
+    public:
+        static LazySingleton *getInstance()
+        {
+            if (singleton == nullptr)
+            {
+                singleton = new LazySingleton();
+            }
+            return singleton;
+        }
+
+    private:
+        LazySingleton()
+        {
+            cout << "Lazy singleton constructed" << endl;
+        }
+        LazySingleton(const LazySingleton &singleton) = delete;
+        LazySingleton &operator=(const LazySingleton &) = delete;
+
+        static LazySingleton *singleton;
+    };
+    LazySingleton *LazySingleton::singleton = nullptr;
+  ```
+
+* 线程安全的懒汉模式
+  ```cpp
+  class SafeLazySingleton
+  {
+  public:
+      SafeLazySingleton(const SafeLazySingleton &singleton) = delete;
+      SafeLazySingleton &operator=(const SafeLazySingleton &) = delete;
+
+      static SafeLazySingleton *getInstance()
+      {
+          // 静态局部变量实现线程安全的懒汉模式
+          // C++11中静态局部变量是线程安全的
+          static SafeLazySingleton singleton;
+          return &singleton;
+      }
+
+  private:
+      SafeLazySingleton()
+      {
+          cout << "Safe lazy singleton constructed" << endl;
+      }
+  };
+  ```
+
+
+## 类型转换
+### C语言的类型转换
+* 隐式转换：编译器编译阶段自动进行，无法转换成功编译会失败
+* 显示类型转换：用户指定方式进行，语法为“(指定类型)变量”
+
+### C++的类型转换
+* static_cast
+  
+  用于相近类型之间的转换，编译器隐式执行的任何类型都可以使用static_cast
+* reinterpret_cast
+
+  用于两个不相关的类型之间进行转换
+* const_cast
+
+  可以删除变量的const属性
+* dynamic_cast
+  
+  安全地将父类指针（或引用）转换为子类的指针（或引用）
+* explicit
+  
+  修饰构造函数，禁止单参数构造函数的隐式转换
+
+### RTTI(运行时类型识别)
+* typeid: 运行时识别出一个对象的类型
+* dynamic_cast：运行时识别出一个父类指针（或引用）指向的是父类对象还是子类对象
+* decltype：在运行时识别出一个表达式或函数的返回值类型
 
 
 ## 单元测试-googletest

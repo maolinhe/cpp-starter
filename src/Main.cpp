@@ -19,6 +19,8 @@
 #include "include/ExtentionClass.h"
 #include "include/Polymorphic.h"
 #include "include/Cpp11.h"
+#include "include/Singleton.h"
+#include "include/Cast.h"
 
 using namespace std;
 using namespace InitialList;
@@ -111,12 +113,14 @@ int main(int argc, char **argv)
     InitialList::T2 t2(t1);
     cout << "--------------------" << endl;
     InitialList::T3 t3(t1);
+    break;
   }
   case U("static"):
   {
     StaticNamespace::Person person;
     person.printAge();
     cout << "person age = " << person.age << endl;
+    break;
   }
   case U("friend"):
   {
@@ -128,22 +132,26 @@ int main(int argc, char **argv)
     FriendSpace::FriendBox friendBox(100, 200);
     FriendSpace::MyClass myClass;
     myClass.printBox(friendBox);
+    break;
   }
   case U("inner_class"):
   {
     InnerClassSpace::OutClass out;
     InnerClassSpace::OutClass::InnerClass in;
     in.print(out);
+    break;
   }
   case U("basic_memory_allocation"):
   {
     MemoryManagerSpace::basicMemoryAllocation();
+    break;
   }
   case U("compare_template_function"):
   {
     cout << TemplateSpace::max(1, 2) << endl;
     cout << TemplateSpace::max(3.5, 2.1) << endl;
     cout << TemplateSpace::max<char>('a', 'A') << endl;
+    break;
   }
   case U("compare_template_class"):
   {
@@ -151,6 +159,7 @@ int main(int argc, char **argv)
     cout << tc.getVal() << endl;
     tc.setVal(100);
     cout << tc.getVal() << endl;
+    break;
   }
   case U("standard_io_test"):
   {
@@ -164,6 +173,7 @@ int main(int argc, char **argv)
     IOSpace::getBinarySize();
     cout << "----------test stringstream----------" << endl;
     IOSpace::stringstreamTest();
+    break;
   }
   case U("access_of_extention"):
   {
@@ -174,6 +184,7 @@ int main(int argc, char **argv)
     subClass1.fun();
     subClass2.fun();
     subClass3.fun();
+    break;
   }
   case U("deafult_methods_call_of_extention"):
   {
@@ -181,6 +192,7 @@ int main(int argc, char **argv)
     cout << "---------------------" << endl;
     ExtentionSpace::SubClass4 obj2 = obj1;
     cout << "---------------------" << endl;
+    break;
   }
   case U("polymorphic"):
   {
@@ -195,6 +207,7 @@ int main(int argc, char **argv)
 
     PolymorphicSpace::Shape &shape2 = rectangle;
     shape2.printArea();
+    break;
   }
   case U("test_cpp11"):
   {
@@ -211,6 +224,21 @@ int main(int argc, char **argv)
     Cpp11Space::uniqueLockTest();
     Cpp11Space::atomicTest();
     Cpp11Space::smartPointerTest();
+    break;
+  }
+  case U("test_singleton"):
+  {
+    SingletonSpace::HungrySingleton *singleton1 = SingletonSpace::HungrySingleton::getInstance();
+    SingletonSpace::LazySingleton *singleton2 = SingletonSpace::LazySingleton::getInstance();
+    SingletonSpace::SafeLazySingleton *singleton3 = SingletonSpace::SafeLazySingleton::getInstance();
+    break;
+  }
+  case U("test_cast"):
+  {
+    CastSpace::testStaticCast();
+    CastSpace::testDynamicCast();
+    CastSpace::testConstCast();
+    break;
   }
   }
 
